@@ -1,11 +1,38 @@
 from pathlib import Path
+import urllib.request as req
+import urllib.error
+import time
+from bs4 import BeautifulSoup
 import json
 from tqdm.notebook import tqdm
-import urllib.request as req
-import time
 
 HTML_DIR = Path("..", "data", "html")
 
+
+def scrape_issue_number():
+    """
+    結果一覧ページのサイトにアクセスして、issue_numberを取得する関数
+    該当ページが存在しない（404）の場合はスキップ
+    """
+    issue_number_list = []
+    url = "https://takarakuji.rakuten.co.jp/backnumber/loto6_past/"
+    try:
+        html = req.urlopen(url).read()
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return []  # 404のときは空のリストを返してスキップ
+        else:
+            raise e  # 他のエラーは再スロー
+    try:
+        time.sleep(1)
+        soup = BeautifulSoup(html, "html.parser")
+        for a in soup.select("ul.linkType01 a"):
+            href = a.get("href")
+            if href.startswith(("/backnumber/loto6/", "/backnumber/loto6_detail/")):
+                issue_number_list.append(href.strip("/").split("/")[-1])
+    except Exception:
+        return []
+    return issue_number_list
 
 def read_issue_number():
     """

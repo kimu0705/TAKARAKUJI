@@ -5,11 +5,19 @@ from collections import Counter
 
 RAWDF_DIR = Path("..", "data", "rawdf")
 
-RECENT_NUMBER = 50
+RECENT_NUMBER = 50 # 直近50回のデータで分析
 NUM_COLS = ['nm1', 'nm2', 'nm3', 'nm4', 'nm5', 'nm6']
+FEATURE_COLS = [
+    "1~14_rank_cnt",
+    "15~29_rank_cnt",
+    "30~43_rank_cnt",
+    "mean_rank",
+    "min_rank",
+    "max_rank"
+]
 
 
-def create_results(html_path_list, save_dir: Path = RAWDF_DIR, save_filename = "results.csv"):
+def create_results_df(html_path_list, save_dir: Path = RAWDF_DIR, save_filename = "results.csv"):
     """
     結果ページのhtmlを読み込んで、結果テーブルに加工する関数
     """
@@ -41,31 +49,31 @@ def create_results(html_path_list, save_dir: Path = RAWDF_DIR, save_filename = "
                     insert = df2.columns[0]
                     df2.loc[df2[insert].astype(str).str.strip() == "本数字", insert] = lottery_day
                     bonus_number = df2.iat[2, 1].strip("()")
-                    df2['ボーナス数字'] = bonus_number
+                    df2['bonus'] = bonus_number
                     df2 = df2.drop(index=range(0, 1), errors="ignore")
                     df2 = df2.drop(index=range(2, 3), errors="ignore")
-                    df2.columns = ['抽せん日', 'nm1', 'nm2', 'nm3', 'nm4', 'nm5', 'nm6', 'ボーナス数字']
+                    df2.columns = ['抽せん日', 'nm1', 'nm2', 'nm3', 'nm4', 'nm5', 'nm6', 'bonus']
                     df2.insert(0, "回号", kaigou_id)
                     df2 = df2.reset_index(drop=True)
                     frames.append(df2)
                 else:
                     kaigou_id = '回号'
-                    df.columns = ['回号', '抽せん日', 'nm1', 'nm2', 'nm3', 'nm4', 'nm5', 'nm6', 'ボーナス数字']
+                    df.columns = ['回号', '抽せん日', 'nm1', 'nm2', 'nm3', 'nm4', 'nm5', 'nm6', 'bonus']
                     frames.append(df)
-    concat_df = pd.concat(frames)
-    concat_df = concat_df.reset_index(drop=True)
+    results_df = pd.concat(frames)
+    results_df = results_df.reset_index(drop=True)
     # 抽選日を datetime に変換
-    concat_df["抽せん日"] = pd.to_datetime(concat_df["抽せん日"])
+    results_df["抽せん日"] = pd.to_datetime(results_df["抽せん日"])
     # 最新順に並び替え
-    concat_df = concat_df.sort_values("抽せん日", ascending=False).reset_index(drop=True)
-    concat_df.to_csv(save_dir / save_filename, sep="\t", index=False)
-    return concat_df
+    results_df = results_df.sort_values("抽せん日", ascending=False).reset_index(drop=True)
+    results_df.to_csv(save_dir / save_filename, sep="\t", index=False)
+    return results_df
 
-def create_results_distribution_features(results, save_dir: Path = RAWDF_DIR, save_filename = "results_distribution_features.csv"):
+def create_results_distribution_features_df(results_df, save_dir: Path = RAWDF_DIR, save_filename = "results_distribution_features.csv"):
     """
     結果テーブルを読み込んで、分布特徴量テーブルに加工する関数
     """
-    df = results.sort_values("回号").reset_index(drop=True)
+    df = results_df.sort_values("回号").reset_index(drop=True)
     # 本数字をintに変更
     df[NUM_COLS] = df[NUM_COLS].apply(pd.to_numeric, errors="coerce").astype("Int64")
 
@@ -121,12 +129,13 @@ def create_results_distribution_features(results, save_dir: Path = RAWDF_DIR, sa
 
         records.append({
             "回号": current["回号"],
-            "1~14": rank_top,
-            "15~29": rank_mid,
-            "30~43": rank_low,
+            "1~14_rank_cnt": rank_top,
+            "15~29_rank_cnt": rank_mid,
+            "30~43_rank_cnt": rank_low,
             "mean_rank": round(mean_rank, 2),
             "min_rank": min_rank,
-            "max_rank": max_rank
+            "max_rank": max_rank,
+            "rank_map": rank_map
         })
 
     results_distribution_features_df = pd.DataFrame(records)
@@ -134,3 +143,41 @@ def create_results_distribution_features(results, save_dir: Path = RAWDF_DIR, sa
     results_distribution_features_df = results_distribution_features_df.sort_values("回号", ascending=False).reset_index(drop=True)
     results_distribution_features_df.to_csv(save_dir / save_filename, sep="\t", index=False)
     return results_distribution_features_df
+
+def create_results_distribution_features_df_mean_std_median(results_distribution_features_df, save_dir: Path = RAWDF_DIR, save_filename = "results_mean_std_median.csv"):
+    """
+    分布特徴量テーブルを読み込んで、平均値・標準偏差・中央値テーブルに加工する関数
+    """
+    FEATURE_COLS = [
+        "1~14_rank_cnt",
+        "15~29_rank_cnt",
+        "30~43_rank_cnt",
+        "mean_rank",
+        "min_rank",
+        "max_rank"
+    ]
+    mean_std = results_distribution_features_df[FEATURE_COLS].agg(["mean", "std"]).round(3)
+    median = results_distribution_features_df[FEATURE_COLS].median().round(3)
+    results_distribution_features_df_mean_std_median = mean_std.copy()
+    results_distribution_features_df_mean_std_median.loc["median"] = median
+    results_distribution_features_df_mean_std_median.to_csv(save_dir / save_filename, sep="\t", index=False)
+    return results_distribution_features_df_mean_std_median
+
+def create_results_distribution_features_df_ada(results_distribution_features_df, save_dir: Path = RAWDF_DIR, save_filename = "results_ada.csv"):
+    """
+    分布特徴量テーブルを読み込んで、高度データ分析テーブルに加工する関数
+    """
+    results_distribution_features_df_ada = results_distribution_features_df.copy()
+    mean_std = results_distribution_features_df[FEATURE_COLS].agg(["mean", "std"])
+    for col in FEATURE_COLS:
+        mean = mean_std.loc["mean", col]
+        std  = mean_std.loc["std", col]
+        results_distribution_features_df_ada[f"{col}_z"] = ((results_distribution_features_df_ada[col] - mean) / std).round(3)
+    results_distribution_features_df_ada["anomaly_score"] = (
+        results_distribution_features_df_ada["1~14_rank_cnt_z"].abs()
+    + results_distribution_features_df_ada["15~29_rank_cnt_z"].abs()
+    + results_distribution_features_df_ada["30~43_rank_cnt_z"].abs()
+    ).round(3)
+    results_distribution_features_df_ada = results_distribution_features_df_ada[['回号', '1~14_rank_cnt', '15~29_rank_cnt', '30~43_rank_cnt', 'mean_rank','min_rank', 'max_rank','1~14_rank_cnt_z', '15~29_rank_cnt_z', '30~43_rank_cnt_z', 'mean_rank_z', 'min_rank_z', 'max_rank_z', 'anomaly_score', 'rank_map']]
+    results_distribution_features_df_ada.to_csv(save_dir / save_filename, sep="\t", index=False)
+    return results_distribution_features_df_ada

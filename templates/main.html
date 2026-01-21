@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>DRAWIN UI Mock</title>
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --line: #e5e7eb;
+        --primary: #0ea5e9;
+        --primary-2: #0284c7;
+        --ok: #16a34a;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --shadow: 0 10px 25px rgba(2, 6, 23, 0.08);
+        --radius: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Hiragino Sans",
+          "Noto Sans JP", "Segoe UI", Arial, sans-serif;
+        color: var(--text);
+        background: linear-gradient(180deg, #eef2ff, var(--bg) 22%, var(--bg));
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 14px 14px 96px;
+      }
+
+      /* Top bar */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        padding: 12px 0 10px;
+        background: linear-gradient(
+          180deg,
+          rgba(238, 242, 255, 0.92),
+          rgba(246, 247, 251, 0.92)
+        );
+        backdrop-filter: blur(10px);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid rgba(229, 231, 235, 0.9);
+        background: rgba(255, 255, 255, 0.75);
+        border-radius: 18px;
+        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+      }
+      .brand-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        background: radial-gradient(
+          circle at 30% 30%,
+          #7dd3fc,
+          var(--primary) 55%,
+          #1d4ed8 130%
+        );
+        display: grid;
+        place-items: center;
+        color: white;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        box-shadow: 0 10px 20px rgba(14, 165, 233, 0.25);
+        flex: 0 0 auto;
+      }
+      .brand-title {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+      .brand-title b {
+        font-size: 15px;
+        letter-spacing: 0.2px;
+      }
+      .brand-title span {
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .brand-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+      .chip {
+        font-size: 12px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        line-height: 1;
+        user-select: none;
+      }
+      .chip strong {
+        color: var(--text);
+        font-weight: 700;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--ok);
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+      }
+
+      /* Sections */
+      .grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid rgba(229, 231, 235, 0.95);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .card-hd {
+        padding: 14px 14px 10px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .card-hd h2 {
+        margin: 0;
+        font-size: 14px;
+        letter-spacing: 0.2px;
+      }
+      .card-hd p {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+      .card-bd {
+        padding: 0 14px 14px;
+      }
+
+      /* Buttons */
+      .btn-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--text);
+        border-radius: 14px;
+        padding: 10px 12px;
+        font-size: 13px;
+        font-weight: 650;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: transform 0.06s ease, box-shadow 0.15s ease,
+          border-color 0.15s ease;
+        user-select: none;
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .btn.primary {
+        background: linear-gradient(180deg, #38bdf8, var(--primary-2));
+        color: #fff;
+        border-color: rgba(14, 165, 233, 0.35);
+        box-shadow: 0 10px 20px rgba(14, 165, 233, 0.22);
+      }
+      .btn.ghost {
+        background: rgba(15, 23, 42, 0.03);
+      }
+      .btn.small {
+        padding: 8px 10px;
+        font-size: 12px;
+        border-radius: 12px;
+      }
+      .btn.icon {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        border-radius: 14px;
+      }
+
+      /* Pick list */
+      .pick-list {
+        display: grid;
+        gap: 10px;
+      }
+      .pick {
+        border: 1px solid rgba(229, 231, 235, 0.95);
+        border-radius: 16px;
+        padding: 12px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.92),
+          rgba(255, 255, 255, 0.72)
+        );
+        display: grid;
+        gap: 10px;
+      }
+      .nums {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .num {
+        width: 44px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        border: 1px solid rgba(229, 231, 235, 0.95);
+        background: #fff;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        box-shadow: 0 6px 14px rgba(2, 6, 23, 0.06);
+      }
+      .meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .meta-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        font-size: 12px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(15, 23, 42, 0.03);
+        color: var(--text);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        line-height: 1;
+      }
+      .badge.ok {
+        border-color: rgba(22, 163, 74, 0.25);
+        background: rgba(22, 163, 74, 0.08);
+        color: #14532d;
+      }
+      .badge.warn {
+        border-color: rgba(245, 158, 11, 0.3);
+        background: rgba(245, 158, 11, 0.12);
+        color: #7c2d12;
+      }
+      .badge.bad {
+        border-color: rgba(239, 68, 68, 0.28);
+        background: rgba(239, 68, 68, 0.1);
+        color: #7f1d1d;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .kpi {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .kpi .box {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.75);
+      }
+      .kpi .box b {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 6px;
+        font-weight: 650;
+      }
+      .kpi .box strong {
+        font-size: 16px;
+        letter-spacing: 0.2px;
+      }
+
+      /* Generator controls */
+      .seg {
+        display: flex;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.03);
+        overflow: auto;
+      }
+      .seg button {
+        border: 1px solid transparent;
+        background: transparent;
+        padding: 9px 12px;
+        border-radius: 14px;
+        font-size: 13px;
+        color: var(--muted);
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .seg button.active {
+        background: #fff;
+        border-color: rgba(14, 165, 233, 0.25);
+        color: var(--text);
+        box-shadow: 0 10px 20px rgba(2, 6, 23, 0.06);
+        font-weight: 750;
+      }
+
+      .sliders {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .slider {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.75);
+      }
+      .slider .row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .slider .row b {
+        font-size: 13px;
+      }
+      .slider .row span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--primary);
+      }
+
+      .toggle-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .toggle {
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.85);
+        font-size: 12px;
+        color: var(--text);
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        user-select: none;
+      }
+      .toggle input {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* Explain */
+      .barwrap {
+        display: grid;
+        gap: 10px;
+      }
+      .bar {
+        display: grid;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.75);
+      }
+      .bar .lbl {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .bar .track {
+        width: 100%;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(100, 116, 139, 0.18);
+        overflow: hidden;
+      }
+      .bar .fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #7dd3fc, var(--primary-2));
+        width: 50%;
+      }
+      .bar .fill.alt {
+        background: linear-gradient(90deg, #86efac, var(--ok));
+      }
+
+      details {
+        border-top: 1px solid rgba(229, 231, 235, 0.9);
+        padding-top: 10px;
+        margin-top: 10px;
+      }
+      summary {
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 750;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      summary::-webkit-details-marker {
+        display: none;
+      }
+      .chev {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--muted);
+        flex: 0 0 auto;
+      }
+      details[open] .chev {
+        transform: rotate(180deg);
+      }
+
+      /* Bottom nav */
+      .nav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.84);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(229, 231, 235, 0.9);
+        padding: 10px 12px 18px;
+        z-index: 60;
+      }
+      .nav-inner {
+        max-width: 800px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .nav a {
+        border: 1px solid transparent;
+        border-radius: 16px;
+        padding: 10px 10px;
+        display: grid;
+        place-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 11px;
+        user-select: none;
+      }
+      .nav a.active {
+        background: rgba(14, 165, 233, 0.1);
+        border-color: rgba(14, 165, 233, 0.25);
+        color: var(--text);
+        font-weight: 750;
+      }
+      .icon {
+        width: 22px;
+        height: 22px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.06);
+        color: var(--text);
+        font-size: 14px;
+      }
+      .nav a.active .icon {
+        background: linear-gradient(180deg, #7dd3fc, var(--primary-2));
+        color: #fff;
+      }
+
+      /* Responsive tweaks */
+      @media (max-width: 420px) {
+        .num {
+          width: 42px;
+        }
+        .kpi {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-left">
+            <div class="logo">D</div>
+            <div class="brand-title">
+              <b>DRAWIN</b>
+              <span>“自然な形”で数字を選ぶ（試作UI）</span>
+            </div>
+          </div>
+          <div class="brand-right">
+            <div class="chip">
+              <span class="dot"></span> 直近<strong>120</strong>回
+            </div>
+            <button class="btn icon" title="設定">⚙️</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOME -->
+      <section class="grid" id="home">
+        <div class="card">
+          <div class="card-hd">
+            <div>
+              <h2>今日の候補（おすすめ）</h2>
+              <p>
+                ※「当たりそう」ではなく「分布として自然か」をスコア化しています。
+              </p>
+            </div>
+            <div class="btn-row">
+              <button class="btn primary">再生成</button>
+              <button class="btn ghost">比較に追加</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="pick-list">
+              <!-- Pick 1 -->
+              <div class="pick">
+                <div class="nums">
+                  <div class="num">3</div>
+                  <div class="num">8</div>
+                  <div class="num">14</div>
+                  <div class="num">21</div>
+                  <div class="num">33</div>
+                  <div class="num">41</div>
+                </div>
+                <div class="meta">
+                  <div class="meta-left">
+                    <span class="badge ok">自然スコア 86</span>
+                    <span class="badge">ゾーン 2-2-2</span>
+                    <span class="badge">平均との差 +0.12σ</span>
+                    <span class="badge ok">連番なし</span>
+                  </div>
+                  <div class="btn-row">
+                    <button class="btn small">保存</button>
+                    <button class="btn small ghost">詳細</button>
+                  </div>
+                </div>
+                <div class="muted">
+                  理由：ゾーン均等／min-maxが安定／極端な偏りなし
+                </div>
+              </div>
+
+              <!-- Pick 2 -->
+              <div class="pick">
+                <div class="nums">
+                  <div class="num">1</div>
+                  <div class="num">11</div>
+                  <div class="num">19</div>
+                  <div class="num">27</div>
+                  <div class="num">36</div>
+                  <div class="num">42</div>
+                </div>
+                <div class="meta">
+                  <div class="meta-left">
+                    <span class="badge ok">自然スコア 79</span>
+                    <span class="badge">ゾーン 2-2-2</span>
+                    <span class="badge">平均との差 -0.05σ</span>
+                    <span class="badge warn">同末尾(1)少し多め</span>
+                  </div>
+                  <div class="btn-row">
+                    <button class="btn small">保存</button>
+                    <button class="btn small ghost">詳細</button>
+                  </div>
+                </div>
+                <div class="muted">
+                  理由：分布は良い／末尾が寄ってるので少し注意
+                </div>
+              </div>
+
+              <!-- Pick 3 -->
+              <div class="pick">
+                <div class="nums">
+                  <div class="num">6</div>
+                  <div class="num">7</div>
+                  <div class="num">16</div>
+                  <div class="num">23</div>
+                  <div class="num">29</div>
+                  <div class="num">31</div>
+                </div>
+                <div class="meta">
+                  <div class="meta-left">
+                    <span class="badge warn">自然スコア 63</span>
+                    <span class="badge">ゾーン 2-3-1</span>
+                    <span class="badge">平均との差 -0.41σ</span>
+                    <span class="badge bad">連番あり</span>
+                  </div>
+                  <div class="btn-row">
+                    <button class="btn small">保存</button>
+                    <button class="btn small ghost">詳細</button>
+                  </div>
+                </div>
+                <div class="muted">
+                  理由：中ゾーン寄り／連番あり（設定で回避可能）
+                </div>
+              </div>
+            </div>
+
+            <div class="kpi">
+              <div class="box">
+                <b>ゾーン比（おすすめ平均）</b>
+                <strong>2-2-2</strong>
+              </div>
+              <div class="box">
+                <b>自然スコア（中央値）</b>
+                <strong>79</strong>
+              </div>
+              <div class="box">
+                <b>警告あり率</b>
+                <strong>33%</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd">
+            <div>
+              <h2>次の一手</h2>
+              <p>
+                買う前に「生成器」で好みに寄せるのがDRAWINの正しい使い方です。
+              </p>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="btn-row">
+              <button class="btn primary">生成器を開く</button>
+              <button class="btn ghost">分析（理由）を見る</button>
+              <button class="btn">履歴に保存</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GENERATE -->
+      <section class="grid" id="generate" style="margin-top: 14px">
+        <div class="card">
+          <div class="card-hd">
+            <div>
+              <h2>生成器</h2>
+              <p>項目は少なめ。必要なら「Advanced」に逃がします。</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn primary">この設定で生成</button>
+              <button class="btn ghost">プリセット保存</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="seg" aria-label="mode">
+              <button class="active">自然寄せ（推奨）</button>
+              <button>ランダム</button>
+              <button>攻める（偏り許容）</button>
+            </div>
+
+            <div class="sliders">
+              <div class="slider">
+                <div class="row">
+                  <b>自然さ</b>
+                  <span>厳格 70%</span>
+                </div>
+                <input type="range" min="0" max="100" value="70" />
+                <div class="muted">分布からズレた組み合わせを弾く強さ</div>
+              </div>
+
+              <div class="slider">
+                <div class="row">
+                  <b>分散</b>
+                  <span>散らす 55%</span>
+                </div>
+                <input type="range" min="0" max="100" value="55" />
+                <div class="muted">
+                  数字同士の距離感（寄せると固まりやすい）
+                </div>
+              </div>
+
+              <div class="slider">
+                <div class="row">
+                  <b>高番重視</b>
+                  <span>中 40%</span>
+                </div>
+                <input type="range" min="0" max="100" value="40" />
+                <div class="muted">30〜43をどれくらい好むか（好みの問題）</div>
+              </div>
+            </div>
+
+            <div class="toggle-row" style="margin-top: 12px">
+              <label class="toggle"
+                ><input type="checkbox" checked /> ゾーン均等（2-2-2）</label
+              >
+              <label class="toggle"
+                ><input type="checkbox" checked /> 連番なし</label
+              >
+              <label class="toggle"
+                ><input type="checkbox" /> 同末尾を避ける</label
+              >
+              <label class="toggle"
+                ><input type="checkbox" checked /> 極端なmin/max回避</label
+              >
+            </div>
+
+            <details>
+              <summary>
+                Advanced（上級者向け）
+                <span class="chev">⌄</span>
+              </summary>
+              <div style="margin-top: 10px; display: grid; gap: 10px">
+                <div class="slider">
+                  <div class="row">
+                    <b>直近N回</b>
+                    <span>120</span>
+                  </div>
+                  <input type="range" min="30" max="300" value="120" />
+                  <div class="muted">
+                    分布を作る対象。短いと敏感、長いと安定。
+                  </div>
+                </div>
+                <div class="slider">
+                  <div class="row">
+                    <b>統計の中心</b>
+                    <span>median（推奨）</span>
+                  </div>
+                  <div class="btn-row">
+                    <button class="btn small primary">median</button>
+                    <button class="btn small">mean</button>
+                    <button class="btn small">trimmed</button>
+                  </div>
+                  <div class="muted">外れ値に強いのは中央値（median）。</div>
+                </div>
+                <div class="slider">
+                  <div class="row">
+                    <b>固定数字</b>
+                    <span>なし</span>
+                  </div>
+                  <div class="muted">例：誕生日数字を必ず入れる、など。</div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXPLAIN -->
+      <section class="grid" id="explain" style="margin-top: 14px">
+        <div class="card">
+          <div class="card-hd">
+            <div>
+              <h2>分析（理由）</h2>
+              <p>このページがあると「納得して買う」体験になります。</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn ghost">対象：Pick #1</button>
+              <button class="btn primary">共有</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="barwrap">
+              <div class="bar">
+                <div class="lbl">
+                  <span>ゾーン 1〜14（直近120回の平均）</span>
+                  <span><b style="color: var(--text)">2.02</b> / 6</span>
+                </div>
+                <div class="track">
+                  <div class="fill" style="width: 34%"></div>
+                </div>
+                <div class="muted">Pick #1：2個（理想帯）</div>
+              </div>
+
+              <div class="bar">
+                <div class="lbl">
+                  <span>ゾーン 15〜29（直近120回の平均）</span>
+                  <span><b style="color: var(--text)">1.98</b> / 6</span>
+                </div>
+                <div class="track">
+                  <div class="fill alt" style="width: 33%"></div>
+                </div>
+                <div class="muted">Pick #1：2個（理想帯）</div>
+              </div>
+
+              <div class="bar">
+                <div class="lbl">
+                  <span>ゾーン 30〜43（直近120回の平均）</span>
+                  <span><b style="color: var(--text)">2.00</b> / 6</span>
+                </div>
+                <div class="track">
+                  <div class="fill" style="width: 33%"></div>
+                </div>
+                <div class="muted">Pick #1：2個（理想帯）</div>
+              </div>
+            </div>
+
+            <details open>
+              <summary>
+                Pick #1 の内訳
+                <span class="chev">⌄</span>
+              </summary>
+              <div style="margin-top: 10px; display: grid; gap: 10px">
+                <div class="pick" style="box-shadow: none">
+                  <div class="nums">
+                    <div class="num">3</div>
+                    <div class="num">8</div>
+                    <div class="num">14</div>
+                    <div class="num">21</div>
+                    <div class="num">33</div>
+                    <div class="num">41</div>
+                  </div>
+                  <div class="meta">
+                    <div class="meta-left">
+                      <span class="badge ok">自然スコア 86</span>
+                      <span class="badge">mean_rank_z -0.08</span>
+                      <span class="badge">min_rank_z +0.11</span>
+                      <span class="badge">max_rank_z +0.04</span>
+                    </div>
+                    <span class="muted">中央値ベース</span>
+                  </div>
+                </div>
+
+                <div class="card" style="box-shadow: none; border-radius: 16px">
+                  <div class="card-bd" style="padding-top: 12px">
+                    <div class="muted" style="margin-bottom: 8px">
+                      2行で結論：
+                    </div>
+                    <div style="display: grid; gap: 8px">
+                      <div class="badge ok">
+                        良い点：ゾーン均等・連番なし・平均付近で安定
+                      </div>
+                      <div class="badge warn">
+                        注意点：高番(41)がやや強め →
+                        分散を少し上げるとさらに自然
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTORY -->
+      <section class="grid" id="history" style="margin-top: 14px">
+        <div class="card">
+          <div class="card-hd">
+            <div>
+              <h2>履歴</h2>
+              <p>当たり外れだけでなく「特徴量のズレ」を残すのがコツ。</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn">当選番号を取り込む</button>
+              <button class="btn ghost">CSV</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="pick-list">
+              <div class="pick">
+                <div class="meta" style="margin-bottom: 6px">
+                  <div class="meta-left">
+                    <span class="badge">第2069回</span>
+                    <span class="badge">2026/01/17</span>
+                    <span class="badge ok">自然 81</span>
+                  </div>
+                  <span class="muted">一致：2個</span>
+                </div>
+                <div class="nums">
+                  <div class="num">5</div>
+                  <div class="num">12</div>
+                  <div class="num">18</div>
+                  <div class="num">24</div>
+                  <div class="num">32</div>
+                  <div class="num">40</div>
+                </div>
+                <div class="muted">
+                  メモ：中ゾーン寄り。次回は分散↑で散らす。
+                </div>
+              </div>
+
+              <div class="pick">
+                <div class="meta" style="margin-bottom: 6px">
+                  <div class="meta-left">
+                    <span class="badge">第2068回</span>
+                    <span class="badge">2026/01/10</span>
+                    <span class="badge warn">自然 66</span>
+                  </div>
+                  <span class="muted">一致：1個</span>
+                </div>
+                <div class="nums">
+                  <div class="num">2</div>
+                  <div class="num">9</div>
+                  <div class="num">10</div>
+                  <div class="num">22</div>
+                  <div class="num">28</div>
+                  <div class="num">31</div>
+                </div>
+                <div class="muted">メモ：連番を許容したらスコアが落ちた。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom Nav (visual only) -->
+    <nav class="nav" aria-label="bottom navigation">
+      <div class="nav-inner">
+        <a class="active" href="#home">
+          <div class="icon">🏠</div>
+          Home
+        </a>
+        <a href="#generate">
+          <div class="icon">🎛️</div>
+          Generate
+        </a>
+        <a href="#explain">
+          <div class="icon">🧠</div>
+          Explain
+        </a>
+        <a href="#history">
+          <div class="icon">🗂️</div>
+          History
+        </a>
+      </div>
+    </nav>
+  </body>
+</html>
