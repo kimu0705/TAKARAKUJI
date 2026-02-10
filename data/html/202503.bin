@@ -850,7 +850,7 @@
     <div class="loto-local-link">
     <div class="local-link-item campaign">
         <p class="title"><b>キャンペーン・お得情報</b></p>
-		<p class="banner banner_ov">
+		<!-- <p class="banner banner_ov">
 			<a href="/app/download/?l-id=com_aside_appdl">
 				<b></b>
 				<span>アプリから宝くじが買える！</span>
@@ -859,7 +859,7 @@
 		<style>
 			.banner_ov b {display:block;width:180px; height:135px;background:url("/pc/champ/loto/img/sidebar_appdl_180x135.png") no-repeat 0 0;}
 			.banner_ov:hover b {background-position:0 100%;}
-		</style>
+		</style> -->
 
 <p class="banner">
   <a href="https://ac.ebis.ne.jp/tr_set.php?argument=ZMhPE4GP&ai=rgp_mno_002460" target="_blank">
